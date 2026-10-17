@@ -108,9 +108,12 @@ def validate_workspace_path(raw):
     if not path.is_absolute() or not path.is_dir(): raise ValueError("Choose an existing, mounted folder for the PeDitX-AI workspace.")
     # Windows system locations stay blocked: OS, program installs, and system-wide data.
     system_roots=[Path(os.environ.get("SystemRoot",r"C:\Windows")),Path(os.environ.get("ProgramFiles",r"C:\Program Files")),Path(os.environ.get("ProgramFiles(x86)",r"C:\Program Files (x86)")),Path(os.environ.get("ProgramData",r"C:\ProgramData"))]
-    users_root=Path(os.environ.get("SystemDrive",r"C:"))/"Users"
-    private_roots=[APP_DIR.resolve(),CONFIG_HOME.resolve(),STATE_HOME.resolve(),(HOME_DIR/"AppData").resolve(),users_root.resolve()]
+    private_roots=[APP_DIR.resolve(),CONFIG_HOME.resolve(),STATE_HOME.resolve(),(HOME_DIR/"AppData").resolve()]
     if path==HOME_DIR.resolve() or any(path==blocked or blocked in path.parents for blocked in system_roots+private_roots): raise ValueError("Choose a dedicated data folder, not a system or PeDitX-AI private configuration folder.")
+    # Another user's profile is off limits; this account's own profile stays usable.
+    users_root=Path(os.environ.get("SystemDrive",r"C:"))/"Users"
+    if users_root.is_absolute() and users_root.resolve() in path.parents and HOME_DIR.resolve() not in path.parents:
+        raise ValueError("Choose a folder inside your own user profile or on another drive, not another user's profile.")
     if path.anchor and path.parent==path: raise ValueError("Choose a specific folder on the drive, not the drive root itself.")
     if not os.access(path,os.R_OK): raise PermissionError("The PeDitX-AI workspace folder is not readable by this user.")
     return str(path)
