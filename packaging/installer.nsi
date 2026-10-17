@@ -6,12 +6,13 @@
 !define COMPANY "PeDitX"
 !define VERSION "0.1.0"
 
+Unicode True
+SetCompressor /SOLID lzma
+
 Name "${APPNAME}"
 OutFile "dist\PeDitX-AI-Setup-x64.exe"
 InstallDir "$LOCALAPPDATA\Programs\${APPNAME}"
 RequestExecutionLevel user
-Unicode True
-SetCompressor /SOLID lz4
 
 !include "MUI2.nsh"
 
