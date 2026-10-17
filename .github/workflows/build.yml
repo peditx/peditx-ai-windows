@@ -20,8 +20,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip pyinstaller
           python -m PyInstaller --noconfirm --onefile --name PeDitX-AI --icon assets/peditx-ai.ico --add-data "web;web" --add-data "assets;assets" --paths src src/peditx_ai.py
+      - name: Install NSIS
+        run: choco install nsis -y --no-progress
       - name: Build NSIS installer
-        run: makensis packaging/installer.nsi
+        run: |
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          makensis packaging/installer.nsi
+        shell: pwsh
       - uses: actions/upload-artifact@v4
         with:
           name: peditx-ai-windows
