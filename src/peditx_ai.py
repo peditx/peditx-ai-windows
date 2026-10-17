@@ -476,8 +476,10 @@ def connect_smb_share(args):
     drive=""
     for line in result.stdout.splitlines():
         if unc.casefold() in line.casefold():
-            candidate=line.split()[0]
-            if len(candidate)==2 and candidate[1]==":": drive=candidate; break
+            # The status table puts "OK" first and the mapped letter ("Z:") second.
+            for token in line.split():
+                if len(token)==2 and token[1]==":" and token[0].isalpha(): drive=token; break
+            if drive: break
     if drive:
         workspace=validate_workspace_path(drive+"\\")
         config=load_config(); config["workspace_path"]=workspace; save_config(config)
