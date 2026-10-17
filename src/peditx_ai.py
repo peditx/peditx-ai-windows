@@ -550,7 +550,10 @@ def run_tool(name,args,mode):
                 first=Path(str(argv[0]).strip('"\'')).name.casefold() if argv else ""
                 if not argv or first not in allowed or any(x in command for x in (";","&","|",">","<","`","$(","\n","\r")):
                     raise PermissionError("Ask mode blocks compound commands. Choose full access deliberately to run them.")
-            proc=subprocess.run(command,shell=True,cwd=Path.home(),capture_output=True,text=True,timeout=60)
+            # Locale decoding with replacement: localized cmd output must never
+            # raise UnicodeDecodeError. ponytail: decode via GetOEMCP() instead
+            # when exact codepage-faithful localized output becomes a real need.
+            proc=subprocess.run(command,shell=True,cwd=Path.home(),capture_output=True,text=True,errors="replace",timeout=60)
             return {"output":(proc.stdout+proc.stderr)[-30000:],"returncode":proc.returncode}
         raise ValueError("Unknown tool.")
     except subprocess.TimeoutExpired: return {"error":"Command timed out after 60 seconds."}
@@ -818,8 +821,10 @@ def run_web_server():
                 if self.path=="/api/models":
                     self._json({"models":discover_models()}); return
                 if self.path=="/api/workspace/choose":
-                    dialog="Add-Type -AssemblyName System.Windows.Forms; $d=New-Object System.Windows.Forms.FolderBrowserDialog; $d.Description='Choose PeDitX-AI workspace'; if($d.ShowDialog() -eq 'OK'){ $d.SelectedPath }"
-                    selected=subprocess.run(["powershell","-NoProfile","-STA","-Command",dialog],capture_output=True,text=True,timeout=300)
+                    # Force UTF-8 on both sides so non-ASCII paths (Persian folder
+                    # names) survive the round trip through Windows PowerShell 5.1.
+                    dialog="[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; Add-Type -AssemblyName System.Windows.Forms; $d=New-Object System.Windows.Forms.FolderBrowserDialog; $d.Description='Choose PeDitX-AI workspace'; if($d.ShowDialog() -eq 'OK'){ $d.SelectedPath }"
+                    selected=subprocess.run(["powershell","-NoProfile","-STA","-Command",dialog],capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=300)
                     if selected.returncode or not selected.stdout.strip(): self._json({"cancelled":True}); return
                     self._json({"workspace_path":validate_workspace_path(selected.stdout.strip())}); return
                 if self.path=="/api/workspace":
