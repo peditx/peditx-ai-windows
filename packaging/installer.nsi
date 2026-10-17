@@ -1,6 +1,7 @@
 ; PeDitX-AI Windows installer (per-user, no admin).
-; Expects dist\PeDitX-AI.exe from packaging\build.ps1 next to the project root.
-; Build: makensis packaging\installer.nsi   (run from the repository root)
+; Expects dist\PeDitX-AI.exe next to this folder (from packaging\build.ps1).
+; Build from INSIDE this folder so cwd and script dir share one base:
+;   cd packaging && makensis installer.nsi
 
 !define APPNAME "PeDitX-AI"
 !define COMPANY "PeDitX"
@@ -10,14 +11,14 @@ Unicode True
 SetCompressor /SOLID lzma
 
 Name "${APPNAME}"
-OutFile "${__FILEDIR__}\..\dist\PeDitX-AI-Setup-x64.exe"
+OutFile "..\dist\PeDitX-AI-Setup-x64.exe"
 InstallDir "$LOCALAPPDATA\Programs\${APPNAME}"
 RequestExecutionLevel user
 
 !include "MUI2.nsh"
 
-!define MUI_ICON "${__FILEDIR__}\..\assets\peditx-ai.ico"
-!define MUI_UNICON "${__FILEDIR__}\..\assets\peditx-ai.ico"
+!define MUI_ICON "..\assets\peditx-ai.ico"
+!define MUI_UNICON "..\assets\peditx-ai.ico"
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -27,10 +28,10 @@ RequestExecutionLevel user
 
 Section "Install"
     SetOutPath "$INSTDIR"
-    File "${__FILEDIR__}\..\dist\PeDitX-AI.exe"
-    File "${__FILEDIR__}\..\src\peditx_ai.py"
-    File /r "${__FILEDIR__}\..\web"
-    File /r "${__FILEDIR__}\..\assets"
+    File "..\dist\PeDitX-AI.exe"
+    File "..\src\peditx_ai.py"
+    File /r "..\web"
+    File /r "..\assets"
 
     ; Start Menu shortcuts: web UI (hidden console) and console CLI.
     CreateDirectory "$SMPROGRAMS\${APPNAME}"
