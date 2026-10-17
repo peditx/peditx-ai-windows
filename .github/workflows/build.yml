@@ -24,8 +24,9 @@ jobs:
         run: choco install nsis -y --no-progress
       - name: Build NSIS installer
         run: |
-          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-          makensis packaging/installer.nsi
+          $nsis = @("${env:ProgramFiles(x86)}\NSIS\makensis.exe", "$env:ProgramFiles\NSIS\makensis.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $nsis) { Write-Error "makensis.exe not found after choco install"; exit 1 }
+          & $nsis packaging\installer.nsi
         shell: pwsh
       - uses: actions/upload-artifact@v4
         with:
