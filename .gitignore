@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.coverage
+htmlcov/
+
+# machine-local editor/agent/shell files that live in this folder
+.claude
+.idea
+.vscode
+.bashrc
+.bash_profile
+.profile
+.zshrc
+.zprofile
+.gitconfig
+.gitmodules
+.mcp.json
+.ripgreprc

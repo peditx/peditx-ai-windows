@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "peditx-ai"
+version = "0.1.0"
+description = "A user-controlled Windows AI assistant with a local web UI and CLI"
+readme = "README-fa.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+peditx-ai = "peditx_ai:main"
+
+[tool.setuptools]
+py-modules = ["peditx_ai"]
+package-dir = {"" = "src"}
