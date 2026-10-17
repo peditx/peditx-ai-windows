@@ -10,14 +10,14 @@ Unicode True
 SetCompressor /SOLID lzma
 
 Name "${APPNAME}"
-OutFile "dist\PeDitX-AI-Setup-x64.exe"
+OutFile "${__FILEDIR__}\..\dist\PeDitX-AI-Setup-x64.exe"
 InstallDir "$LOCALAPPDATA\Programs\${APPNAME}"
 RequestExecutionLevel user
 
 !include "MUI2.nsh"
 
-!define MUI_ICON "assets\peditx-ai.ico"
-!define MUI_UNICON "assets\peditx-ai.ico"
+!define MUI_ICON "${__FILEDIR__}\..\assets\peditx-ai.ico"
+!define MUI_UNICON "${__FILEDIR__}\..\assets\peditx-ai.ico"
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -27,10 +27,10 @@ RequestExecutionLevel user
 
 Section "Install"
     SetOutPath "$INSTDIR"
-    File "dist\PeDitX-AI.exe"
-    File "src\peditx_ai.py"
-    File /r "web"
-    File /r "assets"
+    File "${__FILEDIR__}\..\dist\PeDitX-AI.exe"
+    File "${__FILEDIR__}\..\src\peditx_ai.py"
+    File /r "${__FILEDIR__}\..\web"
+    File /r "${__FILEDIR__}\..\assets"
 
     ; Start Menu shortcuts: web UI (hidden console) and console CLI.
     CreateDirectory "$SMPROGRAMS\${APPNAME}"
